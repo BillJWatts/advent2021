@@ -1,9 +1,9 @@
 """Solution to day 1 problem"""
 
-from config import RESOURCES
+from config import get_input
 
-with open(RESOURCES + "1.txt", "r") as f:
-    values = [int(value) for value in f.readlines()]
+with get_input(__file__) as _input:
+    values = [int(value) for value in _input.readlines()]
 
 total_values = len(values)
 

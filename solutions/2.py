@@ -1,7 +1,7 @@
-from config import RESOURCES
+from config import get_input
 
-with open(RESOURCES + "2.txt") as f:
-    commands = [tuple(com.split()) for com in f.readlines()]
+with get_input(__file__) as _input:
+    commands = [tuple(com.split()) for com in _input.readlines()]
 
 
 """ --- PART ONE --- """
