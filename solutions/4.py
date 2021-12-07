@@ -1,6 +1,8 @@
-from typing import List
-from config import get_input
+from typing import List, final
+
 import numpy as np
+
+from config import get_input
 
 
 def day_four_solution():
@@ -11,24 +13,36 @@ def day_four_solution():
     game_boards = get_game_boards(file)
 
     winning_board = None
+    winning_draw = ""
+    final_board = None
     final_draw = ""
     try:
         for draw in draw_values:
-            for board in game_boards:
+            winning_boards = []
+            for i, board in enumerate(game_boards):
                 board.mark_number(draw)
                 if board.check_win():
-                    final_draw = draw
-                    winning_board = board
-                    raise Winner
+                    if len(game_boards) == 1:
+                        final_board = board
+                        final_draw = draw
+                        raise Winner
+                    if not winning_draw:
+                        winning_draw = draw
+                    if not winning_board:
+                        winning_board = board
+                    winning_boards.append(i)
+            for i in sorted(winning_boards, reverse=True):
+                del game_boards[i]
     except Winner:
         pass
 
-    unmarked_sum = 0
-    for x, y in [tuple(index) for index in np.argwhere(winning_board.mark_board == 0)]:
-        unmarked_sum += int(winning_board.array[x, y])
+    winning_unmarked_sum = get_unmarked_sum(winning_board)
+    final_unmarked_sum = get_unmarked_sum(final_board)
 
     print(" --- Part One --- ")
-    print(unmarked_sum * int(final_draw))
+    print(winning_unmarked_sum * int(winning_draw))
+    print("\n --- Part Two --- ")
+    print(final_unmarked_sum * int(final_draw))
 
 
 class GameBoard:
@@ -64,6 +78,13 @@ def get_game_boards(file) -> List[GameBoard]:
             game_boards.append(GameBoard(board_array))
             temp_game_board = []
     return game_boards
+
+
+def get_unmarked_sum(board: GameBoard) -> int:
+    unmarked_sum = 0
+    for x, y in [tuple(index) for index in np.argwhere(board.mark_board == 0)]:
+        unmarked_sum += int(board.array[x, y])
+    return unmarked_sum
 
 
 day_four_solution()
